@@ -46,11 +46,10 @@ struct ContentView: View {
                 ForEach(0 ..< 3) { number in
                     Button(action: {
                         self.flagTapped(number)
-                        
+                        self.opacityAmount -= 0.75
                         if number == correctAnswer {
                             withAnimation {
                                 self.animationAmount += 360
-                                self.opacityAmount -= 0.75
                             }
                         }
                     }) {
