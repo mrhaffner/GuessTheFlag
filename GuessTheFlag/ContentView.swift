@@ -7,12 +7,27 @@
 
 import SwiftUI
 
+struct FlagImage: View {
+    var countryNumber: String
+
+    var body: some View {
+        Image(countryNumber)
+            .renderingMode(.original)
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(Color.black, lineWidth: 1))
+            .shadow(color: .black, radius: 2)
+    }
+}
+
 struct ContentView: View {
     @State private var showingScore = false
     @State private var scoreTitle = ""
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
     @State private var score = 0
+    
+    @State private var animationAmount = 0.0
+    
     
     var body: some View {
         ZStack {
@@ -30,13 +45,19 @@ struct ContentView: View {
                 ForEach(0 ..< 3) { number in
                     Button(action: {
                         self.flagTapped(number)
+                        if number == correctAnswer {
+                            withAnimation {
+                                    self.animationAmount += 360
+                            }
+                        }
+
                     }) {
-                        Image(self.countries[number])
-                            .renderingMode(.original)
-                            .clipShape(Capsule())
-                            .overlay(Capsule().stroke(Color.black, lineWidth: 1))
-                            .shadow(color: .black, radius: 2)
+                        FlagImage(countryNumber: self.countries[number])
                     }
+                    .rotation3DEffect(
+                        .degrees(number == correctAnswer ? animationAmount : 0.0),
+                        axis: /*@START_MENU_TOKEN@*/(x: 0.0, y: 1.0, z: 0.0)/*@END_MENU_TOKEN@*/
+                    )
                 }
                 Label("Score: \(self.score)", systemImage: "heart.text.square")
                     .foregroundColor(.white)
@@ -69,6 +90,10 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        Group {
+            ContentView()
+            ContentView()
+            ContentView()
+        }
     }
 }
